@@ -8,14 +8,16 @@ const createNewSortTemplate = () => `<ul class="sort">
 
 export default class NewSortView {
   getTemplate() {
-    return createNewSortTemplate()
+    return createNewSortTemplate();
   }
+
   getElement() {
     if (!this.element) {
-      this.element = createElement(this.getTemplate())
+      this.element = createElement(this.getTemplate());
     }
     return this.element;
   }
+
   removeElement() {
     this.element = null;
   }

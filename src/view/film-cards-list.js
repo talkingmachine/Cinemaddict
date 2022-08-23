@@ -7,14 +7,16 @@ const createNewFilmCardsListTemplate = () => `<section class="films-list">
 
 export default class NewFilmCardsListView {
   getTemplate() {
-    return createNewFilmCardsListTemplate()
+    return createNewFilmCardsListTemplate();
   }
+
   getElement() {
     if (!this.element) {
-      this.element = createElement(this.getTemplate())
+      this.element = createElement(this.getTemplate());
     }
     return this.element;
   }
+
   removeElement() {
     this.element = null;
   }

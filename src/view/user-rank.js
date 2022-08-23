@@ -7,14 +7,16 @@ const createNewUserRankTemplate = () => `<section class="header__profile profile
 
 export default class NewUserRankView {
   getTemplate() {
-    return createNewUserRankTemplate()
+    return createNewUserRankTemplate();
   }
+
   getElement() {
     if (!this.element) {
-      this.element = createElement(this.getTemplate())
+      this.element = createElement(this.getTemplate());
     }
     return this.element;
   }
+
   removeElement() {
     this.element = null;
   }

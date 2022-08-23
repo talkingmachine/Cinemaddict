@@ -7,14 +7,16 @@ const createNewMostCommentedListTemplate = () => `<section class="films-list fil
 
 export default class NewMostCommentedListView {
   getTemplate() {
-    return createNewMostCommentedListTemplate()
+    return createNewMostCommentedListTemplate();
   }
+
   getElement() {
     if (!this.element) {
-      this.element = createElement(this.getTemplate())
+      this.element = createElement(this.getTemplate());
     }
     return this.element;
   }
+
   removeElement() {
     this.element = null;
   }

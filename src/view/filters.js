@@ -9,14 +9,16 @@ const createNewFiltersTemplate = () => `<nav class="main-navigation">
 
 export default class NewFiltersView {
   getTemplate() {
-    return createNewFiltersTemplate()
+    return createNewFiltersTemplate();
   }
+
   getElement() {
     if (!this.element) {
-      this.element = createElement(this.getTemplate())
+      this.element = createElement(this.getTemplate());
     }
     return this.element;
   }
+
   removeElement() {
     this.element = null;
   }

@@ -7,14 +7,16 @@ const createNewTopRatedListTemplate = () => `<section class="films-list films-li
 
 export default class NewTopRatedListView {
   getTemplate() {
-    return createNewTopRatedListTemplate()
+    return createNewTopRatedListTemplate();
   }
+
   getElement() {
     if (!this.element) {
-      this.element = createElement(this.getTemplate())
+      this.element = createElement(this.getTemplate());
     }
     return this.element;
   }
+
   removeElement() {
     this.element = null;
   }

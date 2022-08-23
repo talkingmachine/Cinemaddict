@@ -22,14 +22,16 @@ const createNewFilmCardTemplate = () => `<article class="film-card">
 
 export default class NewFilmCardView {
   getTemplate() {
-    return createNewFilmCardTemplate()
+    return createNewFilmCardTemplate();
   }
+
   getElement() {
     if (!this.element) {
-      this.element = createElement(this.getTemplate())
+      this.element = createElement(this.getTemplate());
     }
     return this.element;
   }
+
   removeElement() {
     this.element = null;
   }

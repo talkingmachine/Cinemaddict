@@ -167,14 +167,16 @@ const createNewPopupInfoTemplate = () => `<section class="film-details">
 
 export default class NewPopupInfoView {
   getTemplate() {
-    return createNewPopupInfoTemplate()
+    return createNewPopupInfoTemplate();
   }
+
   getElement() {
     if (!this.element) {
-      this.element = createElement(this.getTemplate())
+      this.element = createElement(this.getTemplate());
     }
     return this.element;
   }
+
   removeElement() {
     this.element = null;
   }
