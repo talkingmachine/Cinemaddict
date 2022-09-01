@@ -5,7 +5,7 @@ const createNewMostCommentedListTemplate = () => `<section class="films-list fil
       <div class="films-list__container"></div>
     </section>`;
 
-export default class NewMostCommentedListView {
+export default class MostCommentedListView {
   getTemplate() {
     return createNewMostCommentedListTemplate();
   }

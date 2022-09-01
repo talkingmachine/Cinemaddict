@@ -2,7 +2,7 @@ import {createElement} from '../render.js';
 
 const createNewFilmsSectionTemplate = () => '<section class="films"></section>';
 
-export default class NewFilmsSectionView {
+export default class FilmsSectionView {
   getTemplate() {
     return createNewFilmsSectionTemplate();
   }

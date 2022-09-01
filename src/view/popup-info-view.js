@@ -1,6 +1,8 @@
 import {createElement} from '../render.js';
 
-const createNewPopupInfoTemplate = () => `<section class="film-details">
+const createNewPopupInfoTemplate = (comments) => {
+
+  return `<section class="film-details">
   <div class="film-details__inner">
     <div class="film-details__top-container">
       <div class="film-details__close">
@@ -77,6 +79,7 @@ const createNewPopupInfoTemplate = () => `<section class="film-details">
         <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
 
         <ul class="film-details__comments-list">
+          ${comments}
           <li class="film-details__comment">
             <span class="film-details__comment-emoji">
               <img src="./images/emoji/smile.png" width="55" height="55" alt="emoji-smile">
@@ -164,10 +167,16 @@ const createNewPopupInfoTemplate = () => `<section class="film-details">
     </div>
   </div>
 </section>`;
+};
 
-export default class NewPopupInfoView {
+
+export default class PopupInfoView {
+  constructor(comments) {
+    this.comments = comments;
+  }
+
   getTemplate() {
-    return createNewPopupInfoTemplate();
+    return createNewPopupInfoTemplate(this.comments);
   }
 
   getElement() {
