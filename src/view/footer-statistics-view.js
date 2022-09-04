@@ -2,7 +2,7 @@ import {createElement} from '../render.js';
 
 const createNewFooterStatisticsTemplate = () => '<p>130 291 movies inside</p>';
 
-export default class NewFooterStatisticsView {
+export default class FooterStatisticsView {
   getTemplate() {
     return createNewFooterStatisticsTemplate();
   }

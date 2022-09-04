@@ -1,5 +1,8 @@
-import Presenter from './presenter.js';
+import Presenter from './presenter/presenter.js';
+import Model from './model/model.js';
 
-const mainPresenter = new Presenter();
+const filmsPresenter = new Presenter();
 
-mainPresenter.init();
+const model = new Model();
+
+filmsPresenter.init(model);

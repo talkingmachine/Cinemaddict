@@ -5,7 +5,7 @@ const createNewTopRatedListTemplate = () => `<section class="films-list films-li
       <div class="films-list__container"></div>
     </section>`;
 
-export default class NewTopRatedListView {
+export default class TopRatedListView {
   getTemplate() {
     return createNewTopRatedListTemplate();
   }
