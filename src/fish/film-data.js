@@ -1,6 +1,6 @@
 export const generateFilmData = () => ({
   'id': '0',
-  'comments': [1],
+  'comments': [1, 2, 3],
   'filmInfo': {
     'title': 'A Little Pony Without The Carpet',
     'alternativeTitle': 'Laziness Who Sold Themselves',
@@ -9,18 +9,20 @@ export const generateFilmData = () => ({
     'ageRating': 0,
     'director': 'Tom Ford',
     'writers': [
-      'Takeshi Kitano'
+      'Anne Wigton', 'Heinz Herald', 'Richard Weil'
     ],
     'actors': [
       'Morgan Freeman'
     ],
     'release': {
-      'date': '2019-05-11T00:00:00.000Z',
+      'date': '2019-08-02T00:00:00.000Z',
       'release_country': 'Finland'
     },
-    'runtime': 77,
+    'runtime': 121,
     'genre': [
-      'Comedy'
+      'Comedy',
+      'Mystery',
+      'Fantasy',
     ],
     'description': 'Oscar-winning film, a war drama about two young people, from the creators of timeless classic "Nu, Pogodi!" and "Alice in Wonderland", with the best fight scenes since Bruce Lee.'
   },

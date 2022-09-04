@@ -4,6 +4,6 @@ const FILMS_COUNTER = {
   mostCommented: 2
 };
 
-const EMOTIONS = ["smile", "sleeping", "puke", "angry"];
+const EMOTIONS = ['smile', 'sleeping', 'puke', 'angry'];
 
 export {FILMS_COUNTER, EMOTIONS};

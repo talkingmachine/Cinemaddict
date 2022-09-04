@@ -16,8 +16,8 @@ export default class Presenter {
   init = (model) => {
     this.model = model;
     this.filmList = [...this.model.getFilms()];
-    this.commentList = [...this.model.getComments()];
-
+    this.commentGenerator = this.model.getComments();
+    this.commentList = this.commentGenerator();
     //console.log(this.filmList);
 
     const siteMainElement = document.querySelector('.main');
@@ -42,7 +42,7 @@ export default class Presenter {
       render(new FilmCardView(this.filmList[i]), siteMainElement.querySelector('.films section:last-child div'));
     }
     render(new FooterStatisticsView(), siteFooterElement.querySelector('.footer__statistics'));
-    render(new PopupInfoView(this.commentList), document.querySelector('body')); // HIDING POPUP
+    render(new PopupInfoView(this.filmList[1], this.commentList), document.querySelector('body')); // HIDING POPUP
   };
 }
 

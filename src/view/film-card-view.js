@@ -1,5 +1,5 @@
 import {createElement} from '../render.js';
-import dayjs from 'dayjs';
+import {humanizeArrayAppearance, humanizeDate, humanizeRuntime} from '../utils.js';
 
 const createNewFilmCardTemplate = (film) => {
   const {title, totalRating, release, runtime, genre, description} = film.filmInfo;
@@ -10,9 +10,9 @@ const createNewFilmCardTemplate = (film) => {
             <h3 class="film-card__title">${title}</h3>
             <p class="film-card__rating">${totalRating}</p>
             <p class="film-card__info">
-              <span class="film-card__year">${dayjs(release.date).format('YYYY')}</span>
-              <span class="film-card__duration">${Math.floor(runtime / 60)}h ${runtime % 60}m</span>
-              <span class="film-card__genre">${genre}</span>
+              <span class="film-card__year">${humanizeDate(release.date)}</span>
+              <span class="film-card__duration">${humanizeRuntime(runtime)}</span>
+              <span class="film-card__genre">${humanizeArrayAppearance(genre)}</span>
             </p>
             <img src="./images/posters/the-man-with-the-golden-arm.jpg" alt="" class="film-card__poster">
             <p class="film-card__description">${description}</p>
