@@ -10,15 +10,14 @@ import TopRatedListView from '../view/top-rated-list-view';
 import MostCommentedListView from '../view/most-commented-list-view';
 import FooterStatisticsView from '../view/footer-statistics-view';
 import PopupInfoView from '../view/popup-info-view'; // HIDING POPUP
-import {FILMS_COUNTER} from '../data.js';
+import {filmsCounter} from '../data.js';
 
-export default class Presenter {
+export default class FilmsPresenter {
   init = (model) => {
     this.model = model;
     this.filmList = [...this.model.getFilms()];
     this.commentGenerator = this.model.getComments();
     this.commentList = this.commentGenerator();
-    //console.log(this.filmList);
 
     const siteMainElement = document.querySelector('.main');
     const siteHeaderElement = document.querySelector('header');
@@ -29,16 +28,16 @@ export default class Presenter {
     render(new SortView(), siteMainElement);
     render(new FilmsSectionView(), siteMainElement);
     render(new FilmCardsListView(), siteMainElement.querySelector('.films'));
-    for (let i = 0; i < FILMS_COUNTER.mainList; i++) {
+    for (let i = 0; i < filmsCounter.mainList; i++) {
       render(new FilmCardView(this.filmList[i]), siteMainElement.querySelector('.films-list__container:last-of-type'));
     }
     render(new ButtonShowMoreView(), siteMainElement.querySelector('.films-list'));
     render(new TopRatedListView(), siteMainElement.querySelector('.films'));
-    for (let i = 0; i < FILMS_COUNTER.topRated; i++) {
+    for (let i = 0; i < filmsCounter.topRated; i++) {
       render(new FilmCardView(this.filmList[i]), siteMainElement.querySelector('.films section:last-child div'));
     }
     render(new MostCommentedListView(), siteMainElement.querySelector('.films'));
-    for (let i = 0; i < FILMS_COUNTER.mostCommented; i++) {
+    for (let i = 0; i < filmsCounter.mostCommented; i++) {
       render(new FilmCardView(this.filmList[i]), siteMainElement.querySelector('.films section:last-child div'));
     }
     render(new FooterStatisticsView(), siteFooterElement.querySelector('.footer__statistics'));

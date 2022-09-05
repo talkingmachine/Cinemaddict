@@ -2,24 +2,13 @@ import {createElement} from '../render.js';
 import {humanizeArrayAppearance, humanizeDate, humanizeDateComments, humanizeRuntime} from '../utils.js';
 
 const constructGenreList = (genres) => {
-  let markup = '';
-  for (const genre of genres) {
-    markup += `<span className="film-details__genre">${genre}</span> `;
-    //? <span class="film-details__genre">Drama</span>
-    //  <span class="film-details__genre">Film-Noir</span>
-    //  <span class="film-details__genre">Mystery</span></td>
-  }
-  //console.log(markup);
-  return markup;
+  const markup = genres.map((genre) => `<span className="film-details__genre">${genre}</span> `);
+  return markup.join('');
 };
 
 const constructCommentList = (commentIds, comments) => {
-  let markup = '';
-  for (const commentId of commentIds) {
-    const comment = comments.find((item) => item.id === commentId.toString());
-    if (comment) {
-      markup +=
-        `<li class="film-details__comment">
+  const filmsCommentsArray = comments.filter((comment) => commentIds.includes(Number(comment.id))); // я бы не додумался
+  const markup = filmsCommentsArray.map((comment) => `<li class="film-details__comment">
             <span class="film-details__comment-emoji">
               <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji-${comment.emotion}">
             </span>
@@ -31,10 +20,8 @@ const constructCommentList = (commentIds, comments) => {
                 <button class="film-details__comment-delete">Delete</button>
               </p>
             </div>
-          </li>`;
-    }
-  }
-  return markup;
+          </li>`);
+  return markup.join('');
 };
 
 const createNewPopupInfoTemplate = (film, comments) => {
