@@ -155,23 +155,27 @@ const createNewPopupInfoTemplate = (film, comments) => {
 
 
 export default class PopupInfoView {
+  #element = null;
+  #film = null;
+  #comments = null;
+
   constructor(film, comments) {
-    this.film = film;
-    this.comments = comments;
+    this.#film = film;
+    this.#comments = comments;
   }
 
-  getTemplate() {
-    return createNewPopupInfoTemplate(this.film, this.comments);
+  get template() {
+    return createNewPopupInfoTemplate(this.#film, this.#comments);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

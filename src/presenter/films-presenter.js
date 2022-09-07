@@ -13,11 +13,14 @@ import PopupInfoView from '../view/popup-info-view'; // HIDING POPUP
 import {filmsCounter} from '../data.js';
 
 export default class FilmsPresenter {
+  #model = null;
+  #filmList = null;
+  #commentList = null;
+
   init = (model) => {
-    this.model = model;
-    this.filmList = [...this.model.getFilms()];
-    this.commentGenerator = this.model.getComments();
-    this.commentList = this.commentGenerator();
+    this.#model = model;
+    this.#filmList = [...this.#model.films];
+    this.#commentList = this.#model.comments;
 
     const siteMainElement = document.querySelector('.main');
     const siteHeaderElement = document.querySelector('header');
@@ -29,20 +32,55 @@ export default class FilmsPresenter {
     render(new FilmsSectionView(), siteMainElement);
     render(new FilmCardsListView(), siteMainElement.querySelector('.films'));
     for (let i = 0; i < filmsCounter.mainList; i++) {
-      render(new FilmCardView(this.filmList[i]), siteMainElement.querySelector('.films-list__container:last-of-type'));
+      this.#renderFilm(this.#filmList[i]);
     }
     render(new ButtonShowMoreView(), siteMainElement.querySelector('.films-list'));
     render(new TopRatedListView(), siteMainElement.querySelector('.films'));
     for (let i = 0; i < filmsCounter.topRated; i++) {
-      render(new FilmCardView(this.filmList[i]), siteMainElement.querySelector('.films section:last-child div'));
+      this.#renderFilm(this.#filmList[i]);
     }
     render(new MostCommentedListView(), siteMainElement.querySelector('.films'));
     for (let i = 0; i < filmsCounter.mostCommented; i++) {
-      render(new FilmCardView(this.filmList[i]), siteMainElement.querySelector('.films section:last-child div'));
+      this.#renderFilm(this.#filmList[i]);
     }
     render(new FooterStatisticsView(), siteFooterElement.querySelector('.footer__statistics'));
-    render(new PopupInfoView(this.filmList[1], this.commentList), document.querySelector('body')); // HIDING POPUP
   };
+
+  #renderFilm = (filmData) => {
+    const popup = new PopupInfoView(filmData, this.#commentList);
+    const film = new FilmCardView(filmData);
+
+    const removePopup = () => {
+      document.querySelector('body').removeChild(popup.element);
+      document.querySelector('body').classList.remove('hide-overflow');
+    };
+    const appendPopup = () => {
+      document.querySelector('body').appendChild(popup.element);
+      document.querySelector('body').classList.add('hide-overflow');
+    };
+
+    const onEscKeyPressed = (evt) => {
+      if (evt.key === 'Escape' || evt.key === 'Esc') {
+        evt.preventDefault();
+        removePopup();
+        document.removeEventListener('keydown', onEscKeyPressed);
+      }
+    };
+
+    film.element.addEventListener('click', () => {
+      appendPopup();
+      document.addEventListener('keydown', onEscKeyPressed);
+
+      popup.element.querySelector('.film-details__close-btn').addEventListener('click', () => {
+        removePopup();
+        document.removeEventListener('keydown', onEscKeyPressed);
+        popup.element.querySelector('.film-details__close-btn').removeEventListener('click', removePopup);
+      });
+    });
+
+    render(film, document.querySelector('.films section:last-child div'));
+  };
+
 }
 
 
