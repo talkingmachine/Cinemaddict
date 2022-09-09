@@ -4,7 +4,7 @@ export const generateFilmData = () => ({
   'filmInfo': {
     'title': 'A Little Pony Without The Carpet',
     'alternativeTitle': 'Laziness Who Sold Themselves',
-    'totalRating': Math.floor(Math.random() * 1323),
+    'totalRating': Math.floor(Math.random() * 1323), // что бы тестовые данные точно различались
     'poster': 'images/posters/blue-blazes.jpg',
     'ageRating': 0,
     'director': 'Tom Ford',

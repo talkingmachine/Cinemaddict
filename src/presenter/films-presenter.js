@@ -13,14 +13,16 @@ import PopupInfoView from '../view/popup-info-view'; // HIDING POPUP
 import {filmsCounter} from '../data.js';
 
 export default class FilmsPresenter {
-  #model = null;
+  #commentsModel = null;
+  #filmsModel = null;
   #filmList = null;
   #commentList = null;
 
-  init = (model) => {
-    this.#model = model;
-    this.#filmList = [...this.#model.films];
-    this.#commentList = this.#model.comments;
+  init = (filmsModel, commentsModel) => {
+    this.#filmsModel = filmsModel;
+    this.#commentsModel = commentsModel;
+    this.#filmList = [...this.#filmsModel.films];
+    this.#commentList = this.#commentsModel.comments;
 
     const siteMainElement = document.querySelector('.main');
     const siteHeaderElement = document.querySelector('header');
@@ -51,12 +53,12 @@ export default class FilmsPresenter {
     const film = new FilmCardView(filmData);
 
     const removePopup = () => {
-      document.querySelector('body').removeChild(popup.element);
-      document.querySelector('body').classList.remove('hide-overflow');
+      document.body.removeChild(popup.element);
+      document.body.classList.remove('hide-overflow');
     };
     const appendPopup = () => {
-      document.querySelector('body').appendChild(popup.element);
-      document.querySelector('body').classList.add('hide-overflow');
+      document.body.appendChild(popup.element);
+      document.body.classList.add('hide-overflow');
     };
 
     const onEscKeyPressed = (evt) => {
@@ -74,11 +76,11 @@ export default class FilmsPresenter {
       popup.element.querySelector('.film-details__close-btn').addEventListener('click', () => {
         removePopup();
         document.removeEventListener('keydown', onEscKeyPressed);
-        popup.element.querySelector('.film-details__close-btn').removeEventListener('click', removePopup);
       });
     });
 
-    render(film, document.querySelector('.films section:last-child div'));
+    //render(film, document.querySelector('.films section:last-child div'));
+    render(film, document.querySelector('.films-list__container:last-of-type'));
   };
 
 }
