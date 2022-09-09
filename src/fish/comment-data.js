@@ -1,4 +1,4 @@
-const generateComments = () => ([
+const generateComments = [
   {
     'id': '1',
     'author': 'Mr First',
@@ -27,6 +27,6 @@ const generateComments = () => ([
     'date': '2032-12-11T00:00:00.554Z',
     'emotion': 'puke'
   }
-]);
+];
 
 export const generateFilmCommentData = () => generateComments;
