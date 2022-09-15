@@ -1,4 +1,5 @@
 import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const createNewButtonShowMoreTemplate = () => '<button class="films-list__show-more">Show more</button>';
 

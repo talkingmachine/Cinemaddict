@@ -3,7 +3,7 @@ const filmsCounter = {
   topRated: 2,
   mostCommented: 2
 };
-const FILMS_CARDS_TO_GENERATE = 11;
+const FILMS_CARDS_TO_GENERATE = 13;
 const FILMS_PER_PAGE = 5;
 const EMOTIONS = ['smile', 'sleeping', 'puke', 'angry'];
 const emptyListOptions = {
