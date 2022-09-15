@@ -92,7 +92,7 @@ export default class FilmsPresenter {
     };
 
     render(showMoreButton, this.#filmsListElement.element);
-    showMoreButton.element.addEventListener('click', showFilmsPage);
+    showMoreButton.setClickHandler(showFilmsPage);
   };
 
   #renderMainFilmsList = (filmData, renderType) => {
@@ -116,17 +116,17 @@ export default class FilmsPresenter {
       }
     };
 
-    film.element.addEventListener('click', () => {
+    film.setClickHandler(() => {
       appendPopup();
       document.addEventListener('keydown', onEscKeyPressed);
 
-      popup.element.querySelector('.film-details__close-btn').addEventListener('click', () => {
+      popup.setClickHandler(() => {
         removePopup();
         document.removeEventListener('keydown', onEscKeyPressed);
-      });
+      }, 'film-details__close-btn');
     });
 
-    switch(renderType) {
+    switch (renderType) {
       case 'mainList':
         render(film, this.#filmsListContainerElement.element);
         break;
