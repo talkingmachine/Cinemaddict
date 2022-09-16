@@ -156,7 +156,7 @@ const createNewPopupInfoTemplate = (film, comments) => {
 
 export default class PopupInfoView extends AbstractView{
   #film = null;
-  #comments = null;;
+  #comments = null;
 
   constructor(film, comments) {
     super();
