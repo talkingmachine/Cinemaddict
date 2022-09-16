@@ -156,7 +156,8 @@ const createNewPopupInfoTemplate = (film, comments) => {
 
 export default class PopupInfoView extends AbstractView{
   #film = null;
-  #comments = null;;
+  #comments = null;
+  #closeButtonElement = this.element.querySelector('.film-details__close-btn');
 
   constructor(film, comments) {
     super();
@@ -170,7 +171,7 @@ export default class PopupInfoView extends AbstractView{
 
   setClickHandler = (callback) => {
     this._callback.click = callback;
-    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#clickHandler);
+    this.#closeButtonElement.addEventListener('click', this.#clickHandler);
   };
 
   #clickHandler = (evt) => {
