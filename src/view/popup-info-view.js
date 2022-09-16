@@ -1,5 +1,5 @@
-import {createElement} from '../render.js';
 import {humanizeArrayAppearance, humanizeDate, humanizeDateComments, humanizeRuntime} from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const constructGenreList = (genres) => {
   const markup = genres.map((genre) => `<span className="film-details__genre">${genre}</span> `);
@@ -154,12 +154,12 @@ const createNewPopupInfoTemplate = (film, comments) => {
 };
 
 
-export default class PopupInfoView {
-  #element = null;
+export default class PopupInfoView extends AbstractView{
   #film = null;
   #comments = null;
 
   constructor(film, comments) {
+    super();
     this.#film = film;
     this.#comments = comments;
   }
@@ -168,14 +168,17 @@ export default class PopupInfoView {
     return createNewPopupInfoTemplate(this.#film, this.#comments);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
+  setClickHandler = (callback, classSelector) => {
+    this._callback.click = callback;
+    if (classSelector) {
+      this.element.querySelector(`.${classSelector}`).addEventListener('click', this.#clickHandler);
+    } else {
+      this.element.addEventListener('click', this.#clickHandler);
     }
-    return this.#element;
-  }
+  };
 
-  removeElement() {
-    this.#element = null;
-  }
+  #clickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.click();
+  };
 }
