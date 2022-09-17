@@ -123,7 +123,7 @@ export default class FilmsPresenter {
       popup.setClickHandler(() => {
         removePopup();
         document.removeEventListener('keydown', onEscKeyPressed);
-      }, 'film-details__close-btn');
+      });
     });
 
     switch (renderType) {
