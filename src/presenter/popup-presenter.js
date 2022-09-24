@@ -1,74 +1,68 @@
-import {replace, remove} from '../framework/render.js';
+import {replace} from '../framework/render.js';
+import PopupInfoView from '../view/popup-info-view.js';
 
 
 export default class PopupPresenter {
-  #commentList = null;
-
-  #popupInfoElement = null;
-  #filmCardElement = null;
-  #updateCard = null;
-
   #filmData = null;
+  #commentList = null; // Model
 
-  constructor(commentList, updateCard) {
-    this.#commentList = commentList;
-    this.#updateCard = updateCard;
+  #DOCUMENT_BODY_ELEMENT = document.body;// Additional vars
+  #DOCUMENT_ELEMENT = document;// Additional vars
+
+  #handleToFavorites = null;
+  #handleToAlreadyWatched = null;
+  #handleWatchlistClick = null; // Functions
+
+  #popupElement = null;// Elements
+
+  constructor(handleWatchlistClick, handleToAlreadyWatched, handleToFavorites) {
+    this.#handleWatchlistClick = handleWatchlistClick;
+    this.#handleToAlreadyWatched = handleToAlreadyWatched;
+    this.#handleToFavorites = handleToFavorites;
   }
 
-  init = (filmData, filmCardElement, popupInfoElement) => {
-    const prevPopupInfoElement = this.#popupInfoElement;
-    this.#filmCardElement = filmCardElement;
-    this.#popupInfoElement = popupInfoElement;
+  init = (filmData, commentsList) => {
+    this.#commentList = commentsList;
     this.#filmData = filmData;
 
-    this.#popupInfoElement.setWatchlistClickHandler(this.#handleWatchlistClick);
-    this.#popupInfoElement.setFavoriteClickHandler(this.#handleToFavorites);
-    this.#popupInfoElement.setAlreadyWatchedClickHandler(this.#handleToAlreadyWatched);
-
-    if (prevPopupInfoElement !== null) {
-      if (document.contains(prevPopupInfoElement.element)) {
-        replace(this.#popupInfoElement, prevPopupInfoElement);
+    const newPopupElement = this.#createPopupElement();
+    if (this.#popupElement !== null) {
+      if (this.#DOCUMENT_BODY_ELEMENT.contains(this.#popupElement.element)) { // если он объявлен и уже в разметке
+        replace(newPopupElement, this.#popupElement);
       }
     }
 
-    this.#popupInfoElement.setClickHandler(() => {
+    this.#popupElement = newPopupElement;
+  };
+
+  #createPopupElement = () => {
+    const newPopupElement = new PopupInfoView(this.#commentList, this.#filmData); ///WTF
+    newPopupElement.setAlreadyWatchedClickHandler(this.#handleToAlreadyWatched);
+    newPopupElement.setFavoriteClickHandler(this.#handleToFavorites);
+    newPopupElement.setWatchlistClickHandler(this.#handleWatchlistClick);
+    newPopupElement.setClickHandler(() => {
       this.#removePopup();
     });
-    remove(prevPopupInfoElement);
+    return newPopupElement;
   };
 
-  destroy = () => {
-    remove(this.#popupInfoElement);
+  #removePreviousPopup = () => {
+    if (this.#DOCUMENT_BODY_ELEMENT.lastElementChild.className === 'film-details'){
+      this.#DOCUMENT_BODY_ELEMENT.removeChild(document.body.lastElementChild);
+    }
   };
 
-  #handleWatchlistClick = () => {
-    this.#updateCard({
-      ...this.#filmData,
-      'filmInfo': {...this.#filmData.filmInfo, 'title': 'watchList!'},
-      'user_details': {...this.#filmData.user_details, 'watchlist': !this.#filmData.user_details.watchlist}
-    });
-  };
-
-  #handleToFavorites = () => {
-    this.#updateCard({
-      ...this.#filmData,
-      'filmInfo': {...this.#filmData.filmInfo, 'title': 'Favorite!!!'},
-      'user_details': {...this.#filmData.user_details, 'favorite': !this.#filmData.user_details.favorite}
-    });
-  };
-
-  #handleToAlreadyWatched = () => {
-    this.#updateCard({
-      ...this.#filmData,
-      'filmInfo': {...this.#filmData.filmInfo, 'title': 'already watched('},
-      'user_details': {...this.#filmData.user_details, 'alreadyWatched': !this.#filmData.user_details.alreadyWatched}
-    });
+  renderPopup = () => {
+    this.#removePreviousPopup();
+    this.#DOCUMENT_BODY_ELEMENT.appendChild(this.#popupElement.element);
+    this.#DOCUMENT_BODY_ELEMENT.classList.add('hide-overflow');
+    this.#DOCUMENT_ELEMENT.addEventListener('keydown', this.#onEscKeyPressed);
   };
 
   #removePopup = () => {
-    document.body.removeChild(this.#popupInfoElement.element);
-    document.body.classList.remove('hide-overflow');
-    document.removeEventListener('keydown', this.#onEscKeyPressed);
+    this.#DOCUMENT_BODY_ELEMENT.removeChild(this.#popupElement.element);
+    this.#DOCUMENT_BODY_ELEMENT.classList.remove('hide-overflow');
+    this.#DOCUMENT_ELEMENT.removeEventListener('keydown', this.#onEscKeyPressed);
   };
 
   #onEscKeyPressed = (evt) => {
@@ -76,5 +70,5 @@ export default class PopupPresenter {
       evt.preventDefault();
       this.#removePopup();
     }
-  }; ///POPUP///
+  };
 }
