@@ -1,84 +1,67 @@
 import {render, replace, remove} from '../framework/render.js';
-import PopupInfoView from '../view/popup-info-view.js';
-import FilmCardView from '../view/film-card-view.js';
 
 
-export default class FilmsPopupsPresenter {
-  #commentList = null;
-
-  #popupInfoElement = null;
+export default class FilmCardPresenter {
   #filmCardElement = null;
   #filmsListContainer = null;
   #topRatedList = null;
   #mostCommentedList = null;
   #updateCard = null;
 
+  #popupInfoElement = null;
+
   #filmData = null;
   #renderType = null;
   #switchSelector = null;
 
-  constructor(commentList, filmListContainer, topRatedList, mostCommentedList, updateCard) {
-    this.#commentList = commentList;
+  constructor(filmListContainer, topRatedList, mostCommentedList, updateCard) {
     this.#filmsListContainer = filmListContainer;
     this.#topRatedList = topRatedList;
     this.#mostCommentedList = mostCommentedList;
     this.#updateCard = updateCard;
   }
 
-  init = (filmData, renderType) => {
+  init = (filmData, filmCardElement, popupInfoElement, renderType) => {
     this.#switchSelector = {
       'mainList': this.#filmsListContainer.element,
       'topRated': this.#topRatedList.element.querySelector('div'),
       'mostCommented': this.#mostCommentedList.element.querySelector('div')
     };
-
-    const prevPopupInfoElement = this.#popupInfoElement; ///POPUP///
     const prevFilmCardElement = this.#filmCardElement;
 
+    this.#filmCardElement = filmCardElement;
+    this.#popupInfoElement = popupInfoElement;
     this.#filmData = filmData;
-    if (!this.#renderType) {
-      this.#renderType = renderType;
-    }
 
-    this.#popupInfoElement = new PopupInfoView(this.#filmData, this.#commentList); ///POPUP///
-    this.#filmCardElement = new FilmCardView(this.#filmData);
+    this.#renderType = renderType ? renderType : this.#renderType;
 
     this.#filmCardElement.setWatchlistClickHandler(this.#handleWatchlistClick);
     this.#filmCardElement.setFavoriteClickHandler(this.#handleToFavorites);
     this.#filmCardElement.setAlreadyWatchedClickHandler(this.#handleToAlreadyWatched);
 
-    this.#popupInfoElement.setWatchlistClickHandler(this.#handleWatchlistClick); ///POPUP///
-    this.#popupInfoElement.setFavoriteClickHandler(this.#handleToFavorites); ///POPUP///
-    this.#popupInfoElement.setAlreadyWatchedClickHandler(this.#handleToAlreadyWatched); ///POPUP///
-
-    if (prevPopupInfoElement === null || prevFilmCardElement === null) {
+    if (prevFilmCardElement === null) {
       this.#renderFilmCardElement(this.#filmCardElement, this.#renderType);
     } else {
       if (this.#switchSelector[this.#renderType].contains(prevFilmCardElement.element)) {
         replace(this.#filmCardElement, prevFilmCardElement);
       }
-      if (document.contains(prevPopupInfoElement.element)) {
-        replace(this.#popupInfoElement, prevPopupInfoElement);
-      }
     }
+    this.#addShowRemovePopupHandlers();
+    remove(prevFilmCardElement);
+  };
 
+  destroy = () => {
+    remove(this.#filmCardElement);
+  };
+
+  #addShowRemovePopupHandlers = () => {
     this.#filmCardElement.setClickHandler(() => {
       this.#appendPopup();
       this.#popupInfoElement.setClickHandler(() => {
         this.#removePopup();
       });
     });
-
-    //console.log(this.#filmData);
-    remove(prevPopupInfoElement);
-    remove(prevFilmCardElement);
   };
-
-  destroy = () => {
-    remove(this.#popupInfoElement);
-    remove(this.#filmCardElement);
-  };
-
 
   #handleWatchlistClick = () => {
     this.#updateCard({
@@ -86,7 +69,7 @@ export default class FilmsPopupsPresenter {
       'filmInfo': {...this.#filmData.filmInfo, 'title': 'watchList!'},
       'user_details': {...this.#filmData.user_details, 'watchlist': !this.#filmData.user_details.watchlist}
     });
-  };
+  }; ///TO UTILS///
 
   #handleToFavorites = () => {
     this.#updateCard({
@@ -94,7 +77,7 @@ export default class FilmsPopupsPresenter {
       'filmInfo': {...this.#filmData.filmInfo, 'title': 'Favorite!!!'},
       'user_details': {...this.#filmData.user_details, 'favorite': !this.#filmData.user_details.favorite}
     });
-  };
+  }; ///TO UTILS///
 
   #handleToAlreadyWatched = () => {
     this.#updateCard({
@@ -102,11 +85,19 @@ export default class FilmsPopupsPresenter {
       'filmInfo': {...this.#filmData.filmInfo, 'title': 'already watched('},
       'user_details': {...this.#filmData.user_details, 'alreadyWatched': !this.#filmData.user_details.alreadyWatched}
     });
-  };
+  }; ///TO UTILS///
 
   #renderFilmCardElement = (filmCardElement, renderType) => {
-    //console.log(filmCardElement, renderType);
     render(filmCardElement, this.#switchSelector[renderType]);
+  };
+
+  #appendPopup = () => {
+    if (document.body.lastElementChild.className === 'film-details'){//-------------TOFIX я не понимаю как
+      document.body.removeChild(document.body.lastElementChild);//-------------TOFIX
+    }
+    document.body.appendChild(this.#popupInfoElement.element);//-------------TOFIX
+    document.body.classList.add('hide-overflow');
+    document.addEventListener('keydown', this.#onEscKeyPressed);
   };
 
   #removePopup = () => {
@@ -115,16 +106,10 @@ export default class FilmsPopupsPresenter {
     document.removeEventListener('keydown', this.#onEscKeyPressed);
   };
 
-  #appendPopup = () => {
-    document.body.appendChild(this.#popupInfoElement.element);
-    document.body.classList.add('hide-overflow');
-    document.addEventListener('keydown', this.#onEscKeyPressed);
-  };
-
   #onEscKeyPressed = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this.#removePopup();
     }
-  };
+  }; ///POPUP///
 }

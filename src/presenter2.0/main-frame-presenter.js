@@ -60,7 +60,7 @@ export default class MainFramePresenter {
     render(this.#filtersElement, siteMainElement, 'afterbegin');
     render(this.#filmsElement, siteMainElement);
     render(this.#filmsListElement, this.#filmsElement.element);
-   // this.#renderFooterStatistics();
+    this.#renderFooterStatistics();
 
     if (!this.#filmList.length) {
       this.#renderEmptyList();
@@ -135,7 +135,7 @@ export default class MainFramePresenter {
     const filmCard = new FilmCardView(filmData);
     const popupInfo = new PopupInfoView(filmData, this.#commentList);
 
-    this.#filmsPresenterList.set(filmData.id, [filmCardPresenter, popupPresenter]); //, filmsPopupsPresenter
+    this.#filmsPresenterList.set(filmData.id, [filmCardPresenter, popupPresenter]); // filmsPopupsPresenter
     filmCardPresenter.init(filmData, filmCard, popupInfo, renderType);
     popupPresenter.init(filmData, filmCard, popupInfo);
   };

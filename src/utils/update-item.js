@@ -6,4 +6,5 @@ const updateItem = (items, newCard) => {
   return [...items.slice(0, index), newCard, ...items.slice(index + 1)];
 };
 
+
 export {updateItem};
