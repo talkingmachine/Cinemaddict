@@ -3,7 +3,7 @@ const filmsCounter = {
   topRated: 2,
   mostCommented: 2
 };
-const FILMS_CARDS_TO_GENERATE = 13;
+const FILMS_CARDS_TO_GENERATE = 11;
 const FILMS_PER_PAGE = 5;
 const EMOTIONS = ['smile', 'sleeping', 'puke', 'angry'];
 const emptyListOptions = {
@@ -12,6 +12,5 @@ const emptyListOptions = {
   'history': 'There are no watched movies now',
   'favorites': 'There are no favorite movies now'
 };
-
 
 export {filmsCounter, EMOTIONS, FILMS_CARDS_TO_GENERATE, FILMS_PER_PAGE, emptyListOptions};

@@ -1,4 +1,4 @@
-import {humanizeArrayAppearance, humanizeDate, humanizeDateComments, humanizeRuntime} from '../utils.js';
+import {humanizeArrayAppearance, humanizeDate, humanizeDateComments, humanizeRuntime} from '../utils/utils.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
 const constructGenreList = (genres) => {
@@ -173,8 +173,44 @@ export default class PopupInfoView extends AbstractView{
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#clickHandler);
   };
 
+  setWatchlistClickHandler = (callback) => {
+    const watchlistButton = this.element.querySelector('.film-details__control-button--watchlist');
+
+    this._callback.watchlistClick = callback;
+    watchlistButton.addEventListener('click', this.#watchlistClickHandler);
+  };
+
+  setFavoriteClickHandler = (callback) => {
+    const favoriteButton = this.element.querySelector('.film-details__control-button--favorite');
+
+    this._callback.favoriteClick = callback;
+    favoriteButton.addEventListener('click', this.#favoriteClickHandler);
+  };
+
+  setAlreadyWatchedClickHandler = (callback) => {
+    const alreadyWatchedButton = this.element.querySelector('.film-details__control-button--watched');
+
+    this._callback.alreadyWatchedClick = callback;
+    alreadyWatchedButton.addEventListener('click', this.#alreadyWatchedClickHandler);
+  };
+
   #clickHandler = (evt) => {
     evt.preventDefault();
     this._callback.click();
+  };
+
+  #watchlistClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.watchlistClick();
+  };
+
+  #favoriteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.favoriteClick();
+  };
+
+  #alreadyWatchedClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.alreadyWatchedClick();
   };
 }

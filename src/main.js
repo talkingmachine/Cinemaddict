@@ -1,9 +1,12 @@
-import FilmsPresenter from './presenter/films-presenter.js';
+
 import CommentsModel from './model/comments-model.js';
 import FilmsModel from './model/films-model.js';
+import FilmsBoardPresenter from './presenter/films-board-presenter.js';
 
 const filmsModel = new FilmsModel();
 const commentsModel = new CommentsModel();
-const filmsPresenter = new FilmsPresenter();
+const filmsPresenter = new FilmsBoardPresenter();
+
+
 filmsPresenter.init(filmsModel, commentsModel);
 
