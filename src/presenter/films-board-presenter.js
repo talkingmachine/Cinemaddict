@@ -26,9 +26,9 @@ export default class FilmsBoardPresenter {
   #filmList = null; // Additional vars
 
 
-  #SITE_MAIN_ELEMENT = document.querySelector('.main');
-  #SITE_HEADER_ELEMENT = document.querySelector('header');
-  #SITE_FOOTER_ELEMENT = document.querySelector('footer');
+  #siteMainElement = document.querySelector('.main');
+  #siteHeaderElement = document.querySelector('header');
+  #siteFooterElement = document.querySelector('footer');
   #mostCommentedListElement = null;
   #filmsListContainerElement = null;
   #topRatedListElement = null;
@@ -81,22 +81,22 @@ export default class FilmsBoardPresenter {
   };
 
   #renderEmptyFrameElements = () => {
-    render(this.#filtersElement, this.#SITE_MAIN_ELEMENT, 'afterbegin');
-    render(this.#filmSectionElement, this.#SITE_MAIN_ELEMENT);
-    render(this.#filmCardsListElement, this.#filmSectionElement.element);
-    render(this.#filmListTitle, this.#filmCardsListElement.element);
+    render(this.#filtersElement, this.#siteMainElement, 'afterbegin');
+    render(this.#filmSectionElement, this.#siteMainElement, 'beforeend');
+    render(this.#filmCardsListElement, this.#filmSectionElement.element, 'beforeend');
+    render(this.#filmListTitle, this.#filmCardsListElement.element, 'beforeend');
 
     this.#renderFooterElement();
   };
 
   #renderNormalFrameElements = () => {
-    render(this.#userRankElement, this.#SITE_HEADER_ELEMENT);
-    render(this.#filtersElement, this.#SITE_MAIN_ELEMENT, 'afterbegin');
-    render(this.#filmSectionElement, this.#SITE_MAIN_ELEMENT);
-    render(this.#filmCardsListElement, this.#filmSectionElement.element);
-    render(this.#filmsListContainerElement, this.#filmCardsListElement.element);
-    render(this.#topRatedListElement, this.#filmSectionElement.element);
-    render(this.#mostCommentedListElement, this.#filmSectionElement.element);
+    render(this.#userRankElement, this.#siteHeaderElement, 'beforeend');
+    render(this.#filtersElement, this.#siteMainElement, 'afterbegin');
+    render(this.#filmSectionElement, this.#siteMainElement, 'beforeend');
+    render(this.#filmCardsListElement, this.#filmSectionElement.element, 'beforeend');
+    render(this.#filmsListContainerElement, this.#filmCardsListElement.element, 'beforeend');
+    render(this.#topRatedListElement, this.#filmSectionElement.element, 'beforeend');
+    render(this.#mostCommentedListElement, this.#filmSectionElement.element, 'beforeend');
     render(this.#sortElement, this.#filmSectionElement.element, 'beforebegin');
 
     this.#renderFooterElement();
@@ -139,7 +139,7 @@ export default class FilmsBoardPresenter {
 
   #createShowMoreButton = () => {
     if (this.#filmList.length > FILMS_PER_PAGE) {
-      render(this.#showMoreButton, this.#filmCardsListElement.element);
+      render(this.#showMoreButton, this.#filmCardsListElement.element, 'beforeend');
       this.#showMoreButton.setClickHandler(this.#renderMoreFilmCards);
     }
   };
@@ -156,7 +156,7 @@ export default class FilmsBoardPresenter {
   };
 
   #renderFooterElement = () => {
-    render(this.#footerElement, this.#SITE_FOOTER_ELEMENT.querySelector('.footer__statistics')); ///////////////////FIX////////////////////////
+    render(this.#footerElement, this.#siteFooterElement.querySelector('.footer__statistics'),'beforeend'); /////FIX////
   };
 
 }

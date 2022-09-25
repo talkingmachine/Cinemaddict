@@ -13,7 +13,7 @@ export default class FilmPresenter {
   #switchSelector = null; // Additional vars
 
   #filmElement = null;
-  #newPopupElement = null;
+  #newPopupPresenter = null;
   #topRatedList = null;
   #mostCommentedList = null;
   #filmsListContainer = null; // Elements
@@ -39,10 +39,10 @@ export default class FilmPresenter {
     if (this.#filmElement !== null) { //                                проверим а был ли он уже объявлен
       if (this.#switchSelector[this.#renderType].contains(this.#filmElement.element)) { // если он объявлен и уже в разметке
         replace(newFilmElement, this.#filmElement); //                  заменим старый образ на только что созданный
-        this.#updatePopupElement();
+        this.#updatePopup();
       }
     } else { //                                                         если нет
-      this.#createPopupElement();
+      this.#createPopupPresenter();
       this.#renderFilmElement(newFilmElement); //                       отрисуем новый образ
     }
 
@@ -55,8 +55,8 @@ export default class FilmPresenter {
     newFilmElement.setFavoriteClickHandler(this.#handleToFavorites);
     newFilmElement.setAlreadyWatchedClickHandler(this.#handleToAlreadyWatched);
     newFilmElement.setClickHandler(() => {
-      this.#updatePopupElement();
-      this.#newPopupElement.renderPopup();
+      this.#updatePopup();
+      this.#newPopupPresenter.renderPopup();
     });
 
     return newFilmElement;
@@ -66,16 +66,16 @@ export default class FilmPresenter {
     render(film, this.#switchSelector[this.#renderType]);
   };
 
-  #createPopupElement = () => { // создание и запоминание попапа
-    this.#newPopupElement = new PopupPresenter(
+  #createPopupPresenter = () => { // создание и запоминание попапа
+    this.#newPopupPresenter = new PopupPresenter(
       this.#handleWatchlistClick,
       this.#handleToAlreadyWatched,
       this.#handleToFavorites
     );
   };
 
-  #updatePopupElement = () => { // отрисовка или обновление попапа
-    this.#newPopupElement.init(this.#commentsList, this.#filmData);
+  #updatePopup = () => { // отрисовка или обновление попапа
+    this.#newPopupPresenter.init(this.#commentsList, this.#filmData);
   };
 
   #handleWatchlistClick = () => {

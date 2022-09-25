@@ -165,11 +165,6 @@ export default class PopupInfoView extends AbstractView{
   }
 
   get template() {
-    // console.log("------------------------");
-    // console.log(this.#film);
-    // console.log("------------------------");
-    // console.log(this.#comments);
-    // console.log("------------------------");
     return createNewPopupInfoTemplate(this.#film, this.#comments);
   }
 

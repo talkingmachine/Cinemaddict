@@ -6,8 +6,8 @@ export default class PopupPresenter {
   #filmData = null;
   #commentList = null; // Model
 
-  #DOCUMENT_BODY_ELEMENT = document.body;// Additional vars
-  #DOCUMENT_ELEMENT = document;// Additional vars
+  #documentBodyElement = document.body;// Additional vars
+  #documentElement = document;// Additional vars
 
   #handleToFavorites = null;
   #handleToAlreadyWatched = null;
@@ -27,7 +27,7 @@ export default class PopupPresenter {
 
     const newPopupElement = this.#createPopupElement();
     if (this.#popupElement !== null) {
-      if (this.#DOCUMENT_BODY_ELEMENT.contains(this.#popupElement.element)) { // если он объявлен и уже в разметке
+      if (this.#documentBodyElement.contains(this.#popupElement.element)) { // если он объявлен и уже в разметке
         replace(newPopupElement, this.#popupElement);
       }
     }
@@ -47,22 +47,22 @@ export default class PopupPresenter {
   };
 
   #removePreviousPopup = () => {
-    if (this.#DOCUMENT_BODY_ELEMENT.lastElementChild.className === 'film-details'){
-      this.#DOCUMENT_BODY_ELEMENT.removeChild(document.body.lastElementChild);
+    if (this.#documentBodyElement.lastElementChild.className === 'film-details'){
+      this.#documentBodyElement.removeChild(document.body.lastElementChild);
     }
   };
 
   renderPopup = () => {
     this.#removePreviousPopup();
-    this.#DOCUMENT_BODY_ELEMENT.appendChild(this.#popupElement.element);
-    this.#DOCUMENT_BODY_ELEMENT.classList.add('hide-overflow');
-    this.#DOCUMENT_ELEMENT.addEventListener('keydown', this.#onEscKeyPressed);
+    this.#documentBodyElement.appendChild(this.#popupElement.element);
+    this.#documentBodyElement.classList.add('hide-overflow');
+    this.#documentElement.addEventListener('keydown', this.#onEscKeyPressed);
   };
 
   #removePopup = () => {
-    this.#DOCUMENT_BODY_ELEMENT.removeChild(this.#popupElement.element);
-    this.#DOCUMENT_BODY_ELEMENT.classList.remove('hide-overflow');
-    this.#DOCUMENT_ELEMENT.removeEventListener('keydown', this.#onEscKeyPressed);
+    this.#documentBodyElement.removeChild(this.#popupElement.element);
+    this.#documentBodyElement.classList.remove('hide-overflow');
+    this.#documentElement.removeEventListener('keydown', this.#onEscKeyPressed);
   };
 
   #onEscKeyPressed = (evt) => {
