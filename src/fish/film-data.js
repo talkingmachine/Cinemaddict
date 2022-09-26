@@ -1,12 +1,18 @@
 import {nanoid} from 'nanoid';
 
+const getRandomInt = (min, max) => {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min; //Максимум не включается, минимум включается
+};
+
 export const generateFilmData = () => ({
   'id': nanoid(),
   'comments': [1, 2, 3],
   'filmInfo': {
     'title': 'A Little Pony Without The Carpet',
     'alternativeTitle': 'Laziness Who Sold Themselves',
-    'totalRating': Math.floor(Math.random() * 1323), // что бы тестовые данные точно различались
+    'totalRating': getRandomInt(1, 50),
     'poster': 'images/posters/blue-blazes.jpg',
     'ageRating': 0,
     'director': 'Tom Ford',
@@ -17,7 +23,7 @@ export const generateFilmData = () => ({
       'Morgan Freeman'
     ],
     'release': {
-      'date': '2019-08-02T00:00:00.000Z',
+      'date': `200${getRandomInt(0, 9)}-0${getRandomInt(1, 9)}-0${getRandomInt(1, 9)}T00:00:00.000Z`, //`${getRandomInt(2000, 2021)}-${getRandomInt(0, 10)}-02T00:00:00.000Z`
       'release_country': 'Finland'
     },
     'runtime': 121,

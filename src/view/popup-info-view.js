@@ -1,4 +1,4 @@
-import {humanizeArrayAppearance, humanizeDate, humanizeDateComments, humanizeRuntime} from '../utils/utils.js';
+import {humanizeArrayAppearance, humanizeDate, humanizeDateComments, humanizeRuntime} from '../utils/humanize.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
 const constructGenreList = (genres) => {
@@ -80,7 +80,7 @@ const createNewPopupInfoTemplate = (film, comments) => {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Release Date</td>
-              <td class="film-details__cell">${humanizeDate(release.date)}</td>
+              <td class="film-details__cell">${humanizeDate(release.date)}, ${release.date}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>

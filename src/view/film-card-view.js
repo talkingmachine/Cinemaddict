@@ -1,4 +1,4 @@
-import {humanizeArrayAppearance, humanizeDate, humanizeRuntime} from '../utils/utils.js';
+import {humanizeArrayAppearance, humanizeDate, humanizeRuntime} from '../utils/humanize.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
 const createNewFilmCardTemplate = (film) => {
