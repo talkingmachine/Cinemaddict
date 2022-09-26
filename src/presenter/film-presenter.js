@@ -1,4 +1,4 @@
-import {render, replace} from '../framework/render.js';
+import {remove, render, replace} from '../framework/render.js';
 import FilmCardView from '../view/film-card-view.js';
 import PopupPresenter from './popup-presenter.js';
 
@@ -12,13 +12,13 @@ export default class FilmPresenter {
   #isPopupRendered = null;
   #switchSelector = null; // Additional vars
 
-  #filmElement = null;
+  #filmComponent = null;
   #newPopupPresenter = null;
   #topRatedList = null;
   #mostCommentedList = null;
   #filmsListContainer = null; // Elements
 
-  constructor(commentList, filmListContainer, topRatedList, mostCommentedList, updateFilmData) {//, filmListContainer, topRatedList, mostCommentedList, updateCard
+  constructor(commentList, filmListContainer, topRatedList, mostCommentedList, updateFilmData) {
     this.#commentsList = commentList;
     this.#filmsListContainer = filmListContainer;
     this.#topRatedList = topRatedList;
@@ -36,9 +36,9 @@ export default class FilmPresenter {
     this.#renderType = renderType ? renderType : this.#renderType;
 
     const newFilmElement = this.#createFilmElement(); //                создадим новый образ фильма
-    if (this.#filmElement !== null) { //                                проверим а был ли он уже объявлен
-      if (this.#switchSelector[this.#renderType].contains(this.#filmElement.element)) { // если он объявлен и уже в разметке
-        replace(newFilmElement, this.#filmElement); //                  заменим старый образ на только что созданный
+    if (this.#filmComponent !== null) { //                                проверим а был ли он уже объявлен
+      if (this.#switchSelector[this.#renderType].contains(this.#filmComponent.element)) { // если он объявлен и уже в разметке
+        replace(newFilmElement, this.#filmComponent); //                  заменим старый образ на только что созданный
         this.#updatePopup();
       }
     } else { //                                                         если нет
@@ -46,7 +46,12 @@ export default class FilmPresenter {
       this.#renderFilmElement(newFilmElement); //                       отрисуем новый образ
     }
 
-    this.#filmElement = newFilmElement; //                              запомним новый образ в переменную класса
+    this.#filmComponent = newFilmElement; //                              запомним новый образ в переменную класса
+  };
+
+  destroy = () => {
+    remove(this.#filmComponent);
+    this.#newPopupPresenter.destroy();
   };
 
   #createFilmElement = () => {

@@ -1,4 +1,4 @@
-import {replace} from '../framework/render.js';
+import {remove, replace, render} from '../framework/render.js';
 import PopupInfoView from '../view/popup-info-view.js';
 
 
@@ -6,14 +6,14 @@ export default class PopupPresenter {
   #filmData = null;
   #commentList = null; // Model
 
-  #documentBodyElement = document.body;// Additional vars
+  #documentBodyElement = document.body;
   #documentElement = document;// Additional vars
 
   #handleToFavorites = null;
   #handleToAlreadyWatched = null;
   #handleWatchlistClick = null; // Functions
 
-  #popupElement = null;// Elements
+  #popupComponent = null;// Components
 
   constructor(handleWatchlistClick, handleToAlreadyWatched, handleToFavorites) {
     this.#handleWatchlistClick = handleWatchlistClick;
@@ -26,13 +26,17 @@ export default class PopupPresenter {
     this.#filmData = filmData;
 
     const newPopupElement = this.#createPopupElement();
-    if (this.#popupElement !== null) {
-      if (this.#documentBodyElement.contains(this.#popupElement.element)) { // если он объявлен и уже в разметке
-        replace(newPopupElement, this.#popupElement);
+    if (this.#popupComponent !== null) {
+      if (this.#documentBodyElement.contains(this.#popupComponent.element)) { // если он объявлен и уже в разметке
+        replace(newPopupElement, this.#popupComponent);
       }
     }
 
-    this.#popupElement = newPopupElement;
+    this.#popupComponent = newPopupElement;
+  };
+
+  destroy = () => {
+    remove(this.#popupComponent);
   };
 
   #createPopupElement = () => {
@@ -54,13 +58,13 @@ export default class PopupPresenter {
 
   renderPopup = () => {
     this.#removePreviousPopup();
-    this.#documentBodyElement.appendChild(this.#popupElement.element);
+    render(this.#popupComponent, this.#documentBodyElement, 'beforeend');
     this.#documentBodyElement.classList.add('hide-overflow');
     this.#documentElement.addEventListener('keydown', this.#onEscKeyPressed);
   };
 
   #removePopup = () => {
-    this.#documentBodyElement.removeChild(this.#popupElement.element);
+    remove(this.#popupComponent);
     this.#documentBodyElement.classList.remove('hide-overflow');
     this.#documentElement.removeEventListener('keydown', this.#onEscKeyPressed);
   };

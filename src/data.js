@@ -12,5 +12,10 @@ const emptyListOptions = {
   'history': 'There are no watched movies now',
   'favorites': 'There are no favorite movies now'
 };
+const sortOptions = {
+  DEFAULT: 'default',
+  DATE: 'date',
+  RATING: 'rating',
+};
 
-export {filmsCounter, EMOTIONS, FILMS_CARDS_TO_GENERATE, FILMS_PER_PAGE, emptyListOptions};
+export {filmsCounter, EMOTIONS, FILMS_CARDS_TO_GENERATE, FILMS_PER_PAGE, emptyListOptions, sortOptions};
