@@ -1,5 +1,6 @@
 import {humanizeArrayAppearance, humanizeDate, humanizeDateComments, humanizeRuntime} from '../utils/humanize.js';
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import {render} from "../framework/render";
 
 const constructGenreList = (genres) => {
   const markup = genres.map((genre) => `<span className="film-details__genre">${genre}</span> `);
@@ -7,7 +8,7 @@ const constructGenreList = (genres) => {
 };
 
 const constructCommentList = (commentIds, comments) => {
-  const filmsCommentsArray = comments.filter((comment) => commentIds.includes(Number(comment.id))); // я бы не додумался
+  const filmsCommentsArray = comments.filter((comment) => commentIds.includes(Number(comment.id)));
   const markup = filmsCommentsArray.map((comment) => `<li class="film-details__comment">
             <span class="film-details__comment-emoji">
               <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji-${comment.emotion}">
@@ -154,19 +155,59 @@ const createNewPopupInfoTemplate = (film, comments) => {
 };
 
 
-export default class PopupInfoView extends AbstractView{
+export default class PopupInfoView extends AbstractStatefulView {
   #film = null;
   #comments = null;
+  #emojiLabel = null;
+  #emojiImage = null;
 
   constructor(film, comments) {
     super();
     this.#film = film;
     this.#comments = comments;
+
+    this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#emojiListHandler);
+    ///this.element.querySelector('#emoji-angry').checked = true;
+    this.#emojiLabel = this.element.querySelector('.film-details__add-emoji-label');
   }
 
   get template() {
     return createNewPopupInfoTemplate(this.#film, this.#comments);
   }
+
+  _restoreHandlers = () => {
+  };
+
+  #emojiListHandler = (evt) => {
+    if (!evt.target.id) {
+      return;
+    }
+
+    if (!this.#emojiImage) {
+      this.#emojiImage = document.createElement('img');
+      this.#emojiLabel.appendChild(this.#emojiImage);
+      this.#emojiImage.width = 55;
+      this.#emojiImage.height = 55;
+    }
+
+    switch (evt.target.id) {
+      case 'emoji-smile':
+        this.#emojiImage.src = './images/emoji/smile.png';
+        //this.element.querySelector('#emoji-smile').checked = true;
+        break;
+      case 'emoji-sleeping':
+        this.#emojiImage.src = './images/emoji/sleeping.png';
+        break;
+      case 'emoji-puke':
+        this.#emojiImage.src = './images/emoji/puke.png';
+        break;
+      case 'emoji-angry':
+        this.#emojiImage.src = './images/emoji/angry.png';
+        break;
+    }
+
+
+  };
 
   setClickHandler = (callback) => {
     this._callback.click = callback;
