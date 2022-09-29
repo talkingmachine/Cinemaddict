@@ -26,7 +26,7 @@ export const generateFilmData = () => ({
       'date': `200${getRandomInt(0, 9)}-0${getRandomInt(1, 9)}-0${getRandomInt(1, 9)}T00:00:00.000Z`, //`${getRandomInt(2000, 2021)}-${getRandomInt(0, 10)}-02T00:00:00.000Z`
       'release_country': 'Finland'
     },
-    'runtime': 121,
+    'runtime': 120,
     'genre': [
       'Comedy',
       'Mystery',
