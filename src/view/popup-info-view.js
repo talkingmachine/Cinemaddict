@@ -1,5 +1,6 @@
 import {humanizeArrayAppearance, humanizeDate, humanizeDateComments, humanizeRuntime} from '../utils/humanize.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import {EMOTIONS} from '../data.js';
 
 const constructGenreList = (genres) => {
   const markup = genres.map((genre) => `<span className="film-details__genre">${genre}</span> `);
@@ -7,8 +8,8 @@ const constructGenreList = (genres) => {
 };
 
 const constructCommentList = (commentIds, comments) => {
-  const filmsCommentsArray = comments.filter((comment) => commentIds.includes(Number(comment.id)));
-  const markup = filmsCommentsArray.map((comment) => `<li class="film-details__comment">
+  const filmsComments = comments.filter((comment) => commentIds.includes(Number(comment.id)));
+  const markup = filmsComments.map((comment) => `<li class="film-details__comment">
             <span class="film-details__comment-emoji">
               <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji-${comment.emotion}">
             </span>
@@ -165,7 +166,6 @@ const createNewPopupInfoTemplate = (film, comments, newCommentForm, addButtons) 
 
 export default class PopupInfoView extends AbstractStatefulView {
   #emojiLabel = null;
-  #emojiImage = null;
 
   constructor(film, comments) {
     super();
@@ -246,22 +246,8 @@ export default class PopupInfoView extends AbstractStatefulView {
       return;
     }
 
-    let pickedEmoji = undefined;
+    const pickedEmoji = EMOTIONS.find((emotion) => evt.target.id === `emoji-${emotion}`);
 
-    switch (evt.target.id) {
-      case 'emoji-smile':
-        pickedEmoji = 'smile';
-        break;
-      case 'emoji-sleeping':
-        pickedEmoji = 'sleeping';
-        break;
-      case 'emoji-puke':
-        pickedEmoji = 'puke';
-        break;
-      case 'emoji-angry':
-        pickedEmoji = 'angry';
-        break;
-    }
     this.updateElement({
       newCommentForm: {...this._state.newCommentForm, emoji: pickedEmoji}
     });
