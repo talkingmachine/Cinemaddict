@@ -24,7 +24,7 @@ export default class PopupPresenter {
   init = (filmData, commentsList) => {
     this.#commentList = commentsList;
     this.#filmData = filmData;
-
+    console.log('popup updated');
     const newPopupElement = this.#createPopupElement();
     if (this.#popupComponent !== null) {
       if (this.#documentBodyElement.contains(this.#popupComponent.element)) { // если он объявлен и уже в разметке

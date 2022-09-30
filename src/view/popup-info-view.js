@@ -1,5 +1,6 @@
 import {humanizeArrayAppearance, humanizeDate, humanizeDateComments, humanizeRuntime} from '../utils/humanize.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import {finalize} from "@babel/core/lib/config/helpers/deep-array";
 
 const constructGenreList = (genres) => {
   const markup = genres.map((genre) => `<span className="film-details__genre">${genre}</span> `);
@@ -22,6 +23,15 @@ const constructCommentList = (commentIds, comments) => {
             </div>
           </li>`);
   return markup.join('');
+};
+
+const createNewEmojiTemplate = (emojiType) => {
+  console.log(emojiType);
+  if (emojiType) {
+    return `<img src='./images/emoji/${emojiType}.png' width="55" height="55" alt="emoji">`;
+  } else {
+    return '';
+  }
 };
 
 const createNewPopupInfoTemplate = (film, comments, newCommentForm) => {
@@ -120,7 +130,7 @@ const createNewPopupInfoTemplate = (film, comments, newCommentForm) => {
 
         <form class="film-details__new-comment" action="" method="get">
           <div class="film-details__add-emoji-label">
-            ${newCommentForm.emoji}
+            ${createNewEmojiTemplate(newCommentForm.emoji)}
           </div>
 
           <label class="film-details__comment-label">
@@ -155,9 +165,6 @@ const createNewPopupInfoTemplate = (film, comments, newCommentForm) => {
 </section>`;
 };
 
-const createNewEmojiTemplate = (emojiType) => {
-  return `<img src="./images/emoji/${emojiType}.png" width="55" height="55" alt="emoji">`
-};
 
 export default class PopupInfoView extends AbstractStatefulView {
   #emojiLabel = null;
@@ -166,11 +173,12 @@ export default class PopupInfoView extends AbstractStatefulView {
   constructor(film, comments) {
     super();
     const newCommentForm = {
-      'emoji': '',
+      'emoji': null,
       'text': ''
     };
 
     this._state = PopupInfoView.parseDataToState(film, comments, newCommentForm);
+    this.#setInnerHandlers();
 
     this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#emojiListHandler);
     this.#emojiLabel = this.element.querySelector('.film-details__add-emoji-label');
@@ -191,47 +199,7 @@ export default class PopupInfoView extends AbstractStatefulView {
     this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#favoriteClickHandler);
     this.element.querySelector('.film-details__control-button--watched').addEventListener('click', this.#alreadyWatchedClickHandler);
 
-    this.element.querySelector('.card__text').addEventListener('input', this.#textInputHandler);
-  };
-
-  #emojiListHandler = (evt) => {
-    evt.preventDefault();
-    if (!evt.target.id) {console.log(evt.target.id);
-      return;
-    }
-
-
-    if (!this.#emojiImage) {
-      this.#emojiImage = document.createElement('img');
-      this.#emojiLabel.appendChild(this.#emojiImage);
-      this.#emojiImage.width = 55;
-      this.#emojiImage.height = 55;
-    }
-
-    let pickedEmoji = undefined;
-
-    switch (evt.target.id) {
-      case 'emoji-smile':
-        pickedEmoji = 'smile';
-        //this.#emojiImage.src = './images/emoji/smile.png';
-        break;
-      case 'emoji-sleeping':
-        pickedEmoji = 'sleeping';
-        //this.#emojiImage.src = './images/emoji/sleeping.png';
-        break;
-      case 'emoji-puke':
-        pickedEmoji = 'puke';
-        //this.#emojiImage.src = './images/emoji/puke.png';
-        break;
-      case 'emoji-angry':
-        pickedEmoji = 'angry';
-        //this.#emojiImage.src = './images/emoji/angry.png';
-        break;
-    }
-
-    this._setState({
-      newCommentForm: {...this._state.newCommentForm, emoji: createNewEmojiTemplate(pickedEmoji)}
-    });
+    this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#textInputHandler);
   };
 
   setClickHandler = (callback) => {
@@ -245,31 +213,22 @@ export default class PopupInfoView extends AbstractStatefulView {
   // };
 
   setWatchlistClickHandler = (callback) => {
-    const watchlistButton = this.element.querySelector('.film-details__control-button--watchlist');
-
     this._callback.watchlistClick = callback;
-    watchlistButton.addEventListener('click', this.#watchlistClickHandler);
   };
 
   setFavoriteClickHandler = (callback) => {
-    const favoriteButton = this.element.querySelector('.film-details__control-button--favorite');
-
     this._callback.favoriteClick = callback;
-    favoriteButton.addEventListener('click', this.#favoriteClickHandler);
   };
 
   setAlreadyWatchedClickHandler = (callback) => {
-    const alreadyWatchedButton = this.element.querySelector('.film-details__control-button--watched');
-
     this._callback.alreadyWatchedClick = callback;
-    alreadyWatchedButton.addEventListener('click', this.#alreadyWatchedClickHandler);
   };
 
-  reset = (task) => {
-    this.updateElement(
-      PopupInfoView.parseDataToState(task),
-    );
-  };
+  // reset = (task) => {
+  //   this.updateElement(
+  //     PopupInfoView.parseDataToState(task),
+  //   );
+  // };
 
   #clickHandler = (evt) => {
     evt.preventDefault();
@@ -280,6 +239,39 @@ export default class PopupInfoView extends AbstractStatefulView {
   //   evt.preventDefault();
   //   this._callback.commentSubmit(PopupInfoView.parseStateToData(this._state));
   // };
+
+  #emojiListHandler = (evt) => {
+    if (!evt.target.id) {
+      return;
+    }
+
+    if (!this.#emojiImage) {
+      this.#emojiImage = document.createElement('img');
+      this.#emojiLabel.appendChild(this.#emojiImage);
+      this.#emojiImage.width = 55;
+      this.#emojiImage.height = 55;
+    }
+
+    let pickedEmoji = undefined;
+
+    switch (evt.target.id) {
+      case 'emoji-smile':
+        pickedEmoji = 'smile';
+        break;
+      case 'emoji-sleeping':
+        pickedEmoji = 'sleeping';
+        break;
+      case 'emoji-puke':
+        pickedEmoji = 'puke';
+        break;
+      case 'emoji-angry':
+        pickedEmoji = 'angry';
+        break;
+    }
+    this.updateElement({
+      newCommentForm: {...this._state.newCommentForm, emoji: pickedEmoji}
+    });
+  };
 
   #textInputHandler = (evt) => {
     evt.preventDefault();
@@ -296,6 +288,7 @@ export default class PopupInfoView extends AbstractStatefulView {
   #favoriteClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.favoriteClick();
+
   };
 
   #alreadyWatchedClickHandler = (evt) => {
@@ -309,9 +302,9 @@ export default class PopupInfoView extends AbstractStatefulView {
     'newCommentForm': newCommentForm
   });
 
-  static parseStateToData = (state) => {
-    const data = {...state, newCommentForm: {...state.newCommentForm, comments}};
-
-    return data;
-  };
+  // static parseStateToData = (state) => {
+  //   const data = {...state, newCommentForm: {...state.newCommentForm, comments}};
+  //
+  //   return data;
+  // };
 }
