@@ -1,6 +1,5 @@
 import {humanizeArrayAppearance, humanizeDate, humanizeDateComments, humanizeRuntime} from '../utils/humanize.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import {finalize} from "@babel/core/lib/config/helpers/deep-array";
 
 const constructGenreList = (genres) => {
   const markup = genres.map((genre) => `<span className="film-details__genre">${genre}</span> `);
@@ -25,16 +24,9 @@ const constructCommentList = (commentIds, comments) => {
   return markup.join('');
 };
 
-const createNewEmojiTemplate = (emojiType) => {
-  console.log(emojiType);
-  if (emojiType) {
-    return `<img src='./images/emoji/${emojiType}.png' width="55" height="55" alt="emoji">`;
-  } else {
-    return '';
-  }
-};
+const createNewEmojiTemplate = (emojiType) => emojiType ? `<img src='./images/emoji/${emojiType}.png' width="55" height="55" alt="emoji">` : '';
 
-const createNewPopupInfoTemplate = (film, comments, newCommentForm) => {
+const createNewPopupInfoTemplate = (film, comments, newCommentForm, addButtons) => {
   const {
     ageRating,
     title,
@@ -49,6 +41,11 @@ const createNewPopupInfoTemplate = (film, comments, newCommentForm) => {
     description
   } = film.filmInfo;
   const commentsCounter = film.comments.length;
+  addButtons = {
+    favorite: addButtons.favorite ? 'film-details__control-button--active' : '',
+    alreadyWatched: addButtons.alreadyWatched ? 'film-details__control-button--active' : '',
+    watchlist: addButtons.watchlist ? 'film-details__control-button--active' : '',
+  };
 
   return `<section class="film-details">
   <div class="film-details__inner">
@@ -114,9 +111,9 @@ const createNewPopupInfoTemplate = (film, comments, newCommentForm) => {
       </div>
 
       <section class="film-details__controls">
-        <button type="button" class="film-details__control-button film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
-        <button type="button" class="film-details__control-button film-details__control-button--active film-details__control-button--watched" id="watched" name="watched">Already watched</button>
-        <button type="button" class="film-details__control-button film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
+        <button type="button" class="film-details__control-button ${addButtons.watchlist} film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
+        <button type="button" class="film-details__control-button ${addButtons.alreadyWatched} film-details__control-button--watched" id="watched" name="watched">Already watched</button>
+        <button type="button" class="film-details__control-button ${addButtons.favorite} film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
       </section>
     </div>
 
@@ -138,22 +135,22 @@ const createNewPopupInfoTemplate = (film, comments, newCommentForm) => {
           </label>
 
           <div class="film-details__emoji-list">
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
+            <input class="film-details__emoji-item visually-hidden" ${newCommentForm.emoji === 'smile' ? 'checked' : ''} name="comment-emoji" type="radio" id="emoji-smile" value="smile">
             <label class="film-details__emoji-label" for="emoji-smile">
               <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
             </label>
 
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
+            <input class="film-details__emoji-item visually-hidden" ${newCommentForm.emoji === 'sleeping' ? 'checked' : ''} name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
             <label class="film-details__emoji-label" for="emoji-sleeping">
               <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
             </label>
 
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
+            <input class="film-details__emoji-item visually-hidden" ${newCommentForm.emoji === 'puke' ? 'checked' : ''} name="comment-emoji" type="radio" id="emoji-puke" value="puke">
             <label class="film-details__emoji-label" for="emoji-puke">
               <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
             </label>
 
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
+            <input class="film-details__emoji-item visually-hidden" ${newCommentForm.emoji === 'angry' ? 'checked' : ''} name="comment-emoji" type="radio" id="emoji-angry" value="angry">
             <label class="film-details__emoji-label" for="emoji-angry">
               <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
             </label>
@@ -172,24 +169,36 @@ export default class PopupInfoView extends AbstractStatefulView {
 
   constructor(film, comments) {
     super();
-    const newCommentForm = {
+    const newCommentForm = { // вызывается только при создании объекта
       'emoji': null,
       'text': ''
     };
+    const addButtons = { // вызывается только при создании объекта
+      'watchlist': false,
+      'favorite': false,
+      'alreadyWatched': false
+    };
+    const properties = {
+      'scrollYPosition': 0
+    };
 
-    this._state = PopupInfoView.parseDataToState(film, comments, newCommentForm);
+    this._state = PopupInfoView.parseDataToState(film, comments, newCommentForm, addButtons, properties);
     this.#setInnerHandlers();
 
-    this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#emojiListHandler);
     this.#emojiLabel = this.element.querySelector('.film-details__add-emoji-label');
   }
 
   get template() {
-    return createNewPopupInfoTemplate(this._state.film, this._state.comments, this._state.newCommentForm);
+    return createNewPopupInfoTemplate(this._state.film, this._state.comments, this._state.newCommentForm, this._state.addButtons);
   }
 
   _restoreHandlers = () => {
     this.#setInnerHandlers();
+    this.#restoreScroll();
+  };
+
+  #restoreScroll = () => {
+    this.element.scrollTop = this._state.properties.scrollYPosition;
   };
 
   #setInnerHandlers = () => {
@@ -198,6 +207,7 @@ export default class PopupInfoView extends AbstractStatefulView {
     this.element.querySelector('.film-details__control-button--watchlist').addEventListener('click', this.#watchlistClickHandler);
     this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#favoriteClickHandler);
     this.element.querySelector('.film-details__control-button--watched').addEventListener('click', this.#alreadyWatchedClickHandler);
+    this.element.addEventListener('scroll', this.#scrollHandler);
 
     this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#textInputHandler);
   };
@@ -206,11 +216,6 @@ export default class PopupInfoView extends AbstractStatefulView {
     this._callback.click = callback;
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#clickHandler);
   };
-
-  // setCommentSubmitHandler = (callback) => {
-  //   this._callback.commentSubmit = callback;
-  //   //this.element.addEventListener() - отправка комментария
-  // };
 
   setWatchlistClickHandler = (callback) => {
     this._callback.watchlistClick = callback;
@@ -224,32 +229,21 @@ export default class PopupInfoView extends AbstractStatefulView {
     this._callback.alreadyWatchedClick = callback;
   };
 
-  // reset = (task) => {
-  //   this.updateElement(
-  //     PopupInfoView.parseDataToState(task),
-  //   );
-  // };
-
   #clickHandler = (evt) => {
     evt.preventDefault();
     this._callback.click();
   };
 
-  // #commentSubmitHandler = (evt) => {
-  //   evt.preventDefault();
-  //   this._callback.commentSubmit(PopupInfoView.parseStateToData(this._state));
-  // };
+  #scrollHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({
+      properties: {...this._state.properties, scrollYPosition: this.element.scrollTop}
+    });
+  };
 
   #emojiListHandler = (evt) => {
     if (!evt.target.id) {
       return;
-    }
-
-    if (!this.#emojiImage) {
-      this.#emojiImage = document.createElement('img');
-      this.#emojiLabel.appendChild(this.#emojiImage);
-      this.#emojiImage.width = 55;
-      this.#emojiImage.height = 55;
     }
 
     let pickedEmoji = undefined;
@@ -283,28 +277,33 @@ export default class PopupInfoView extends AbstractStatefulView {
   #watchlistClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.watchlistClick();
+    this.updateElement({
+      addButtons: {...this._state.addButtons, watchlist: !this._state.addButtons.watchlist}
+    });
   };
 
   #favoriteClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.favoriteClick();
-
+    this.updateElement({
+      addButtons: {...this._state.addButtons, favorite: !this._state.addButtons.favorite}
+    });
   };
 
   #alreadyWatchedClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.alreadyWatchedClick();
+    this.updateElement({
+      addButtons: {...this._state.addButtons, alreadyWatched: !this._state.addButtons.alreadyWatched}
+    });
   };
 
-  static parseDataToState = (film, comments, newCommentForm) => ({
+  static parseDataToState = (film, comments, newCommentForm, addButtons, properties) => ({
     'film': film,
     'comments': comments,
-    'newCommentForm': newCommentForm
+    'newCommentForm': newCommentForm,
+    'addButtons': addButtons,
+    'properties': properties
   });
 
-  // static parseStateToData = (state) => {
-  //   const data = {...state, newCommentForm: {...state.newCommentForm, comments}};
-  //
-  //   return data;
-  // };
 }
