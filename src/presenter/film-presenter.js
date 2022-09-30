@@ -86,7 +86,6 @@ export default class FilmPresenter {
   #handleWatchlistClick = () => {
     this.#updateFilmData({
       ...this.#filmData,
-      'filmInfo': {...this.#filmData.filmInfo, 'title': 'watchList!'},
       'user_details': {...this.#filmData.user_details, 'watchlist': !this.#filmData.user_details.watchlist}
     });
   };
@@ -94,7 +93,6 @@ export default class FilmPresenter {
   #handleToFavorites = () => {
     this.#updateFilmData({
       ...this.#filmData,
-      'filmInfo': {...this.#filmData.filmInfo, 'title': 'Favorite!!!'},
       'user_details': {...this.#filmData.user_details, 'favorite': !this.#filmData.user_details.favorite}
     });
   };
@@ -102,7 +100,6 @@ export default class FilmPresenter {
   #handleToAlreadyWatched = () => {
     this.#updateFilmData({
       ...this.#filmData,
-      'filmInfo': {...this.#filmData.filmInfo, 'title': 'already watched('},
       'user_details': {...this.#filmData.user_details, 'alreadyWatched': !this.#filmData.user_details.alreadyWatched}
     });
   };

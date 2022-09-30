@@ -1,4 +1,4 @@
-import {remove, replace, render} from '../framework/render.js';
+import {remove, render} from '../framework/render.js';
 import PopupInfoView from '../view/popup-info-view.js';
 
 
@@ -25,14 +25,12 @@ export default class PopupPresenter {
     this.#commentList = commentsList;
     this.#filmData = filmData;
 
-    const newPopupElement = this.#createPopupElement();
     if (this.#popupComponent !== null) {
       if (this.#documentBodyElement.contains(this.#popupComponent.element)) { // если он объявлен и уже в разметке
-        replace(newPopupElement, this.#popupComponent);
+        return;
       }
     }
-
-    this.#popupComponent = newPopupElement;
+    this.#popupComponent = this.#createPopupElement();
   };
 
   destroy = () => {

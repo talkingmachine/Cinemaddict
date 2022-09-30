@@ -1,5 +1,5 @@
 import {humanizeArrayAppearance, humanizeDate, humanizeDateComments, humanizeRuntime} from '../utils/humanize.js';
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 
 const constructGenreList = (genres) => {
   const markup = genres.map((genre) => `<span className="film-details__genre">${genre}</span> `);
@@ -7,7 +7,7 @@ const constructGenreList = (genres) => {
 };
 
 const constructCommentList = (commentIds, comments) => {
-  const filmsCommentsArray = comments.filter((comment) => commentIds.includes(Number(comment.id))); // я бы не додумался
+  const filmsCommentsArray = comments.filter((comment) => commentIds.includes(Number(comment.id)));
   const markup = filmsCommentsArray.map((comment) => `<li class="film-details__comment">
             <span class="film-details__comment-emoji">
               <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji-${comment.emotion}">
@@ -24,7 +24,9 @@ const constructCommentList = (commentIds, comments) => {
   return markup.join('');
 };
 
-const createNewPopupInfoTemplate = (film, comments) => {
+const createNewEmojiTemplate = (emojiType) => emojiType ? `<img src='./images/emoji/${emojiType}.png' width="55" height="55" alt="emoji">` : '';
+
+const createNewPopupInfoTemplate = (film, comments, newCommentForm, addButtons) => {
   const {
     ageRating,
     title,
@@ -39,6 +41,11 @@ const createNewPopupInfoTemplate = (film, comments) => {
     description
   } = film.filmInfo;
   const commentsCounter = film.comments.length;
+  addButtons = {
+    favorite: addButtons.favorite ? 'film-details__control-button--active' : '',
+    alreadyWatched: addButtons.alreadyWatched ? 'film-details__control-button--active' : '',
+    watchlist: addButtons.watchlist ? 'film-details__control-button--active' : '',
+  };
 
   return `<section class="film-details">
   <div class="film-details__inner">
@@ -80,7 +87,7 @@ const createNewPopupInfoTemplate = (film, comments) => {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Release Date</td>
-              <td class="film-details__cell">${humanizeDate(release.date)}, ${release.date}</td>
+              <td class="film-details__cell">${humanizeDate(release.date)}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>
@@ -104,9 +111,9 @@ const createNewPopupInfoTemplate = (film, comments) => {
       </div>
 
       <section class="film-details__controls">
-        <button type="button" class="film-details__control-button film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
-        <button type="button" class="film-details__control-button film-details__control-button--active film-details__control-button--watched" id="watched" name="watched">Already watched</button>
-        <button type="button" class="film-details__control-button film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
+        <button type="button" class="film-details__control-button ${addButtons.watchlist} film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
+        <button type="button" class="film-details__control-button ${addButtons.alreadyWatched} film-details__control-button--watched" id="watched" name="watched">Already watched</button>
+        <button type="button" class="film-details__control-button ${addButtons.favorite} film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
       </section>
     </div>
 
@@ -119,29 +126,31 @@ const createNewPopupInfoTemplate = (film, comments) => {
         </ul>
 
         <form class="film-details__new-comment" action="" method="get">
-          <div class="film-details__add-emoji-label"></div>
+          <div class="film-details__add-emoji-label">
+            ${createNewEmojiTemplate(newCommentForm.emoji)}
+          </div>
 
           <label class="film-details__comment-label">
-            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${newCommentForm.text}</textarea>
           </label>
 
           <div class="film-details__emoji-list">
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
+            <input class="film-details__emoji-item visually-hidden" ${newCommentForm.emoji === 'smile' ? 'checked' : ''} name="comment-emoji" type="radio" id="emoji-smile" value="smile">
             <label class="film-details__emoji-label" for="emoji-smile">
               <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
             </label>
 
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
+            <input class="film-details__emoji-item visually-hidden" ${newCommentForm.emoji === 'sleeping' ? 'checked' : ''} name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
             <label class="film-details__emoji-label" for="emoji-sleeping">
               <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
             </label>
 
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
+            <input class="film-details__emoji-item visually-hidden" ${newCommentForm.emoji === 'puke' ? 'checked' : ''} name="comment-emoji" type="radio" id="emoji-puke" value="puke">
             <label class="film-details__emoji-label" for="emoji-puke">
               <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
             </label>
 
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
+            <input class="film-details__emoji-item visually-hidden" ${newCommentForm.emoji === 'angry' ? 'checked' : ''} name="comment-emoji" type="radio" id="emoji-angry" value="angry">
             <label class="film-details__emoji-label" for="emoji-angry">
               <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
             </label>
@@ -154,19 +163,54 @@ const createNewPopupInfoTemplate = (film, comments) => {
 };
 
 
-export default class PopupInfoView extends AbstractView{
-  #film = null;
-  #comments = null;
+export default class PopupInfoView extends AbstractStatefulView {
+  #emojiLabel = null;
+  #emojiImage = null;
 
   constructor(film, comments) {
     super();
-    this.#film = film;
-    this.#comments = comments;
+    const newCommentForm = { // вызывается только при создании объекта
+      'emoji': null,
+      'text': ''
+    };
+    const addButtons = { // вызывается только при создании объекта
+      'watchlist': false,
+      'favorite': false,
+      'alreadyWatched': false
+    };
+    const properties = {
+      'scrollYPosition': 0
+    };
+
+    this._state = PopupInfoView.parseDataToState(film, comments, newCommentForm, addButtons, properties);
+    this.#setInnerHandlers();
+
+    this.#emojiLabel = this.element.querySelector('.film-details__add-emoji-label');
   }
 
   get template() {
-    return createNewPopupInfoTemplate(this.#film, this.#comments);
+    return createNewPopupInfoTemplate(this._state.film, this._state.comments, this._state.newCommentForm, this._state.addButtons);
   }
+
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.#restoreScroll();
+  };
+
+  #restoreScroll = () => {
+    this.element.scrollTop = this._state.properties.scrollYPosition;
+  };
+
+  #setInnerHandlers = () => {
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#clickHandler);
+    this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#emojiListHandler);
+    this.element.querySelector('.film-details__control-button--watchlist').addEventListener('click', this.#watchlistClickHandler);
+    this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#favoriteClickHandler);
+    this.element.querySelector('.film-details__control-button--watched').addEventListener('click', this.#alreadyWatchedClickHandler);
+    this.element.addEventListener('scroll', this.#scrollHandler);
+
+    this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#textInputHandler);
+  };
 
   setClickHandler = (callback) => {
     this._callback.click = callback;
@@ -174,24 +218,15 @@ export default class PopupInfoView extends AbstractView{
   };
 
   setWatchlistClickHandler = (callback) => {
-    const watchlistButton = this.element.querySelector('.film-details__control-button--watchlist');
-
     this._callback.watchlistClick = callback;
-    watchlistButton.addEventListener('click', this.#watchlistClickHandler);
   };
 
   setFavoriteClickHandler = (callback) => {
-    const favoriteButton = this.element.querySelector('.film-details__control-button--favorite');
-
     this._callback.favoriteClick = callback;
-    favoriteButton.addEventListener('click', this.#favoriteClickHandler);
   };
 
   setAlreadyWatchedClickHandler = (callback) => {
-    const alreadyWatchedButton = this.element.querySelector('.film-details__control-button--watched');
-
     this._callback.alreadyWatchedClick = callback;
-    alreadyWatchedButton.addEventListener('click', this.#alreadyWatchedClickHandler);
   };
 
   #clickHandler = (evt) => {
@@ -199,18 +234,76 @@ export default class PopupInfoView extends AbstractView{
     this._callback.click();
   };
 
+  #scrollHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({
+      properties: {...this._state.properties, scrollYPosition: this.element.scrollTop}
+    });
+  };
+
+  #emojiListHandler = (evt) => {
+    if (!evt.target.id) {
+      return;
+    }
+
+    let pickedEmoji = undefined;
+
+    switch (evt.target.id) {
+      case 'emoji-smile':
+        pickedEmoji = 'smile';
+        break;
+      case 'emoji-sleeping':
+        pickedEmoji = 'sleeping';
+        break;
+      case 'emoji-puke':
+        pickedEmoji = 'puke';
+        break;
+      case 'emoji-angry':
+        pickedEmoji = 'angry';
+        break;
+    }
+    this.updateElement({
+      newCommentForm: {...this._state.newCommentForm, emoji: pickedEmoji}
+    });
+  };
+
+  #textInputHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({
+      newCommentForm: {...this._state.newCommentForm, text: evt.target.value}
+    });
+  };
+
   #watchlistClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.watchlistClick();
+    this.updateElement({
+      addButtons: {...this._state.addButtons, watchlist: !this._state.addButtons.watchlist}
+    });
   };
 
   #favoriteClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.favoriteClick();
+    this.updateElement({
+      addButtons: {...this._state.addButtons, favorite: !this._state.addButtons.favorite}
+    });
   };
 
   #alreadyWatchedClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.alreadyWatchedClick();
+    this.updateElement({
+      addButtons: {...this._state.addButtons, alreadyWatched: !this._state.addButtons.alreadyWatched}
+    });
   };
+
+  static parseDataToState = (film, comments, newCommentForm, addButtons, properties) => ({
+    'film': film,
+    'comments': comments,
+    'newCommentForm': newCommentForm,
+    'addButtons': addButtons,
+    'properties': properties
+  });
+
 }
